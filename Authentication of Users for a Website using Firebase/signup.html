@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="resource/fontawesome/all.min.css" >
+    <script src="all.min.js"></script>
+    
+    <style>
+       body{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+        margin: 0px;
+       }
+
+    </style>
+</head>
+<body class="bg-primary">
+    
+    <div class ="mb-5">
+        <h1 class="text-center text-light">Welcome To</h1>
+        <h1 class="text-center text-light">Avtar Internship</h1>
+         <h3 class="text-center text-danger">Assignment-2</h3>
+         <br><br><br>
+        <h3 class="mb-3 text-center">Sign Up</h3>
+        <input type="text" placeholder="Full Name" id="nameInp" class="form-control mb-3"/>
+        <input type="text" placeholder="Email" id="userInp" class="form-control mb-3"/>
+        <input type="text" placeholder="Username" id="emailInp" class="form-control mb-3"/>
+        <input type="text" placeholder="Password" id="passInp" class="form-control mb-3"/>
+        <input type="tel" placeholder="Phone Number" id="phone" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" class="form-control mb-3" />
+        <input type="date" data-data-incline-picker="true" id="dob" class="form-control mb-3"/>
+        <button type="text" id="sub_btn" class="btn w-100 btn-outline-danger mb-3">Sign Up</button>
+        <a href="login.html" class="badge badge-secondary py-1 w-100">Already Have a Account</a>
+    </div>
+
+
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
+        
+        const firebaseConfig = {
+          apiKey: "AIzaSyBYNW96GNSebvSY6KUUWceLU6QyND7payM",
+          authDomain: "register-and-login-2b863.firebaseapp.com",
+          databaseURL: "https://register-and-login-2b863-default-rtdb.firebaseio.com",
+          projectId: "register-and-login-2b863",
+          storageBucket: "register-and-login-2b863.appspot.com",
+          messagingSenderId: "52597622080",
+          appId: "1:52597622080:web:2d3ed7c6c6b39471c0a6a5"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        import {getDatabase,ref,set, child, get}
+             from "https://www.gstatic.com/firebasejs/9.6.6/firebase-database.js";
+
+             const db=getDatabase();
+
+    //................... The references............//
+             const name=document.getElementById('nameInp');
+             const email=document.getElementById('userInp');
+             const username=document.getElementById('emailInp');
+             const pass=document.getElementById('passInp');
+             const phone=document.getElementById('phone');
+             const date=document.getElementById('dob');
+             const submit=document.getElementById('sub_btn');
+    //..................Validation....................//
+            //  function isEmptyOrSpaces(str){
+            //      return str== null || str.match(/^ */) !=null;
+            //  }
+             
+             
+             function Validation(){
+                 let nameregex=/^[a-zA-Z\s]+$/;
+                 let emailregex=/^[a-zA-Z0-9]{5,}$/;
+                 let userregex=/^[a-zA-Z0-9]+@(gmail|yahoo|outlook)\.com$/;
+                 
+            
+                //  if(isEmptyOrSpaces(name.value) || isEmptyOrSpaces(email.value) || isEmptyOrSpaces(username.value) || isEmptyOrSpaces(pass.value)){
+                //      alert("You cannot left any field empty! ");
+                //      return false;
+                //  }
+
+
+                 if(!nameregex.test(name.value)){
+                     alert("The Name should only contains alphabets!");
+                     return false;
+                 }
+                 if(!emailregex.test(username.value)){
+                     alert("Enter the Valid Email Address!");
+                     return false;
+
+                 }
+                 if(!userregex.test(email.value)){
+                     alert("username can only be alphanumberic\n-username must be atleast 5 characters\n-username cannot contains spaces!");
+                     return false;
+                 }
+                 return true;
+             } 
+    //.................Register user to FireBase......................// 
+            function RegisterUser(){
+                if(!Validation()){
+                    return;
+                };
+                const dbRef =ref(db);
+
+                get(child(dbRef, "UsersList/"+ username.value)).then((snapshot)=>{
+                    if(snapshot.exists()){
+                        alert("Account Already Exits!");
+                    }
+                    else{
+                        set(ref(db, "UsersList/"+ username.value),
+                        {
+                            fullname: name.value,
+                            email: username.value,
+                            username: email.value,
+                            PhoneNumber: phone.value,
+                            dob: date.value,
+                            password: encPass()
+                           
+                        })
+                        .then(()=>{
+                             alert("User added SuccessFully");
+                        })
+                        .catch((error)=>{
+                            alert("Error"+error);
+                        })
+                    }
+                });
+            }  
+    //..................Encryption.............//
+            function encPass(){
+                var pass12=CryptoJS.AES.encrypt(pass.value, pass.value);
+                return pass12.toString();
+            }          
+    //...............Assign the Event.................//
+            submit.addEventListener('click',RegisterUser);                      
+      </script>
+</body>
+</html>
